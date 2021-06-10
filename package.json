@@ -1,0 +1,21 @@
+{
+  "name": "typoteka-3",
+  "version": "1.0.0",
+  "description": "Введите \"Типотека\"",
+  "main": "./src/service/service.js",
+  "scripts": {
+    "start": "node ./src/service/service.js",
+    "test": "npm run eslint",
+    "eslint": "eslint --ext .js src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-alex:Alexandr10m/1388447-typoteka-3.git"
+  },
+  "author": "Alexandr Scherbackij",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "7.28.0",
+    "eslint-config-htmlacademy": "0.6.0"
+  }
+}
