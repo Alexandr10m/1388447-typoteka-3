@@ -45,7 +45,7 @@ const generateMockData = (countMock, titles, sentences, categories) => {
     announce: generateAnnounce(sentences),
     fullText: generateFullText(sentences),
     category: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
-    createdDate: publishedDate,
+    createdDate: new Date(publishedDate),
   }))
 };
 const publishedDate = new Date().setDate(-getRandomInt(0, DAYS_PER_MONTH * MAX_MONTH));
