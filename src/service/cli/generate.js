@@ -2,6 +2,7 @@
 
 const fs = require('fs/promises');
 const {getRandomInt, shuffle} = require('../../utils');
+const {ExitCode} = require( '../../constants');
 
 const FILE_NAME = `mocks.json`;
 const DEFAULT_COUNT = 1;
@@ -54,11 +55,12 @@ const generateMockData = (countMock, titles, sentences, categories) => {
 module.exports = {
   name: `--generate`,
   async run(args) {
+    try {
     const [count] = args;
     const number = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     if (number > MAX_COUNT) {
-      throw Error(`Не больше 1000 публикаций`);
+       throw Error(`Не больше 1000 публикаций`);
     }
 
     const titles = await readContent(FilePath.TITLES);
@@ -67,11 +69,12 @@ module.exports = {
 
     const mockData = JSON.stringify(generateMockData(number, titles, sentences, categories));
 
-    try {
+
       await fs.writeFile(FILE_NAME, mockData);
+      process.exit(ExitCode.SUCCESS)
     } catch (err) {
       console.log(err);
-      throw Error(err);
+      process.exit(ExitCode.ERROR)
     }
   }
 };
