@@ -1,8 +1,10 @@
-module.exports.ExitCode = {
+const ExitCode = {
   SUCCESS: 0,
   ERROR: 1,
 };
 
-module.exports.USER_ARGV_INDEX = 2;
+const USER_ARGV_INDEX = 2;
 
-module.exports.DEFAULT_COMMAND = `--help`;
+const DEFAULT_COMMAND = `--help`;
+
+module.exports = {ExitCode, USER_ARGV_INDEX, DEFAULT_COMMAND};
