@@ -3,6 +3,7 @@
 const fs = require('fs/promises');
 const {getRandomInt, shuffle} = require('../../utils');
 const {ExitCode} = require( '../../constants');
+const chalk = require('chalk');
 
 const FILE_NAME = `mocks.json`;
 const DEFAULT_COUNT = 1;
@@ -71,6 +72,7 @@ module.exports = {
 
 
       await fs.writeFile(FILE_NAME, mockData);
+      console.log(chalk.green(`Operation success. File created.`));
       process.exit(ExitCode.SUCCESS)
     } catch (err) {
       console.log(err);

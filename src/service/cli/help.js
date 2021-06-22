@@ -1,10 +1,11 @@
 const {name: version} = require('./version');
 const {name: generate} = require('./generate');
+const chalk = require('chalk');
 
 module.exports = {
   name: `--help`,
   run() {
-    console.log(`
+    console.log(chalk.grey(`
     Программа запускает http-сервер и формирует файл с данными для API.
 
     Гайд:
@@ -14,7 +15,7 @@ module.exports = {
     ${this.name}:               печатает этот текст
     ${generate}: <count>   формирует файл mocks.json
 
-    `
+    `)
     );
   }
 }
