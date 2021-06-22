@@ -2,7 +2,6 @@
 
 const fs = require('fs/promises');
 const {getRandomInt, shuffle} = require('../../utils');
-const {ExitCode} = require( '../../constants');
 const chalk = require('chalk');
 
 const FILE_NAME = `mocks.json`;
@@ -24,8 +23,9 @@ const readContent = async (filePath) => {
   try {
     const content = await fs.readFile(filePath, `utf8`);
     return content.trim().split(`\n`);
+
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(`Error in readContent function`, err));
     return [];
   }
 
@@ -56,27 +56,25 @@ const generateMockData = (countMock, titles, sentences, categories) => {
 module.exports = {
   name: `--generate`,
   async run(args) {
-    try {
-    const [count] = args;
-    const number = Number.parseInt(count, 10) || DEFAULT_COUNT;
-
-    if (number > MAX_COUNT) {
-       throw Error(`Не больше 1000 публикаций`);
-    }
-
     const titles = await readContent(FilePath.TITLES);
     const sentences = await readContent(FilePath.SENTENCES);
     const categories = await readContent(FilePath.CATEGORIES);
 
+    const [count] = args;
+    const number = Number.parseInt(count, 10) || DEFAULT_COUNT;
+
+    if (number > MAX_COUNT) {
+      throw Error(`Не больше ${MAX_COUNT} публикаций`);
+    }
+
     const mockData = JSON.stringify(generateMockData(number, titles, sentences, categories));
 
-
+    try {
       await fs.writeFile(FILE_NAME, mockData);
       console.log(chalk.green(`Operation success. File created.`));
-      process.exit(ExitCode.SUCCESS)
+
     } catch (err) {
-      console.log(err);
-      process.exit(ExitCode.ERROR)
+      throw new Error(`Error in generate command`);
     }
   }
 };

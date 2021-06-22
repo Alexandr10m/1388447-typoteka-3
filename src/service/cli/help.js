@@ -1,3 +1,5 @@
+'use strict';
+
 const {name: version} = require('./version');
 const {name: generate} = require('./generate');
 const chalk = require('chalk');
@@ -15,7 +17,6 @@ module.exports = {
     ${this.name}:               печатает этот текст
     ${generate}: <count>   формирует файл mocks.json
 
-    `)
-    );
+    `));
   }
 }
