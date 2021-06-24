@@ -12,6 +12,7 @@ const [userCommand] = userArguments;
     try {
       if (userArguments.length === 0 || !Cli[userCommand]) {
         await Cli[DEFAULT_COMMAND].run();
+        return;
       }
 
       await Cli[userCommand].run(userArguments.slice(1));
