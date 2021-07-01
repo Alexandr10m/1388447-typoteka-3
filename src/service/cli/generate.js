@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs/promises');
-const {getRandomInt, shuffle} = require('../../utils');
-const chalk = require('chalk');
+const fs = require(`fs/promises`);
+const {getRandomInt, shuffle} = require(`../../utils`);
+const chalk = require(`chalk`);
 
 const FILE_NAME = `mocks.json`;
 const DEFAULT_COUNT = 1;
@@ -13,11 +13,11 @@ const FilePath = {
   TITLES: `./data/titles.txt`,
   CATEGORIES: `./data/categories.txt`,
   SENTENCES: `./data/sentences.txt`,
-}
+};
 const AnnouncementBoundaries = {
   MIN: 1,
   MAX: 5,
-}
+};
 
 const readContent = async (filePath) => {
   try {
@@ -29,16 +29,16 @@ const readContent = async (filePath) => {
     return [];
   }
 
-}
+};
 const generateAnnounce = (text) => {
   return shuffle(text)
     .slice(0, getRandomInt(AnnouncementBoundaries.MIN, AnnouncementBoundaries.MAX))
     .join(` `);
-}
+};
 
 const generateFullText = (text) => {
   return shuffle(text).slice(0, getRandomInt(1, text.length - 1)).join(` `);
-}
+};
 
 const publishedDate = new Date().setDate(-getRandomInt(0, DAYS_PER_MONTH * MAX_MONTH));
 
@@ -49,7 +49,7 @@ const generateMockData = (countMock, titles, sentences, categories) => {
     fullText: generateFullText(sentences),
     category: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
     createdDate: new Date(publishedDate).toISOString(),
-  }))
+  }));
 };
 
 

@@ -1,3 +1,5 @@
+'use strict';
+
 const ExitCode = {
   SUCCESS: 0,
   ERROR: 1,
@@ -10,11 +12,11 @@ const HttpCode = {
 
 const Route = {
   MAIN: `/`,
-}
+};
 
 const USER_ARGV_INDEX = 2;
 
-const MOCKS_FILE_PATH = 'mocks.json';
+const MOCKS_FILE_PATH = `mocks.json`;
 
 const DEFAULT_COMMAND = `--help`;
 
