@@ -15,7 +15,7 @@ module.exports = {
     const [customPort] = args;
     const port = +customPort || DEFAULT_PORT;
 
-    server.listen(port, () => console.info(chalk.green(`Waiting for connection on ${port}`)))
+    server.listen(port, () => console.info(chalk.green(`Waiting for connection on ${port}`)));
     server.on(`error`, ({message}) => console.error(`Server creation error: ${message}`));
   }
 };

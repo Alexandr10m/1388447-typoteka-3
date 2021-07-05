@@ -23,6 +23,6 @@ postRouts.get(`/`, async (req, res) => {
     res.status(HttpCode.INTERNAL_SERVER_ERROR);
     res.send([]);
   }
+});
 
-})
 module.exports = postRouts;
