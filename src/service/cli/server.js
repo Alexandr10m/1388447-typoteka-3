@@ -2,12 +2,13 @@
 
 const express = require(`express`);
 const chalk = require(`chalk`);
-const {DEFAULT_PORT} = require(`../../constants`);
-const postRouts = require(`./routs`);
+const {DEFAULT_PORT, API_PREFIX} = require(`../../constants`);
+const routerApi = require(`../api`);
 
 const server = express();
+
 server.use(express.json());
-server.use(`/posts`, postRouts);
+server.use(API_PREFIX, routerApi);
 
 module.exports = {
   name: `--server`,
