@@ -23,4 +23,15 @@ const DEFAULT_COMMAND = `--help`;
 
 const DEFAULT_PORT = 3000;
 
-module.exports = {ExitCode, USER_ARGV_INDEX, DEFAULT_COMMAND, HttpCode, Route, DEFAULT_PORT, MOCKS_FILE_PATH};
+const MAX_LENGTH_ID = 6;
+
+module.exports = {
+  ExitCode,
+  USER_ARGV_INDEX,
+  DEFAULT_COMMAND,
+  HttpCode,
+  Route,
+  DEFAULT_PORT,
+  MOCKS_FILE_PATH,
+  MAX_LENGTH_ID
+};
