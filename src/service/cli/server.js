@@ -2,13 +2,15 @@
 
 const express = require(`express`);
 const chalk = require(`chalk`);
-const {DEFAULT_PORT, API_PREFIX} = require(`../../constants`);
+const {DEFAULT_PORT} = require(`../../constants`);
 const routerApi = require(`../api`);
 
 const server = express();
-
 server.use(express.json());
-server.use(API_PREFIX, routerApi);
+
+(async () => {
+  await routerApi(server);
+})();
 
 module.exports = {
   name: `--server`,

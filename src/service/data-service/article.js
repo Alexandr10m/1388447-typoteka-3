@@ -3,7 +3,7 @@
 const {nanoid} = require(`nanoid`);
 const {MAX_LENGTH_ID} = require(`../../constants`);
 
-class ArticleService{
+class ArticleService {
   constructor(articles) {
     this._articles = articles;
   }
@@ -13,7 +13,7 @@ class ArticleService{
   }
 
   findOne(id) {
-    const article = this._articles.find((article) => article.id === id);
+    const article = this._articles.find((item) => item.id === id);
 
     if (!article) {
       return null;
@@ -23,7 +23,7 @@ class ArticleService{
   }
 
   create(article) {
-    const newArticle = Object.assign({id: nanoid(MAX_LENGTH_ID), comments: []},  article);
+    const newArticle = Object.assign({id: nanoid(MAX_LENGTH_ID), comments: []}, article);
 
     this._articles.push(newArticle);
 
@@ -31,19 +31,19 @@ class ArticleService{
   }
 
   remove(id) {
-    const article = this._articles.filter((article) => article.id === id);
+    const article = this._articles.filter((item) => item.id === id);
 
     if (!article) {
       return null;
     }
 
-    this._articles = this._articles.filter((article) => article.id !== id);
+    this._articles = this._articles.filter((item) => item.id !== id);
 
     return article;
   }
 
   upDate(id, article) {
-    const oldArticle = this._articles.find((article) => article.id === id);
+    const oldArticle = this._articles.find((item) => item.id === id);
 
     return Object.assign(oldArticle, article);
   }

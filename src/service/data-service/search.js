@@ -15,7 +15,7 @@ class SearchService {
   }
 
   findByCategory(query) {
-    const article = this._articles.find((article) => article.category.find((category) => category.includes(query)));
+    const article = this._articles.find((item) => item.category.find((category) => category.includes(query)));
     if (!article) {
       return null;
     }
@@ -23,7 +23,7 @@ class SearchService {
   }
 
   findByFullText(query) {
-    const article = this._articles.find((article) => article.fullText.includes(query));
+    const article = this._articles.find((item) => item.fullText.includes(query));
     if (!article) {
       return null;
     }
@@ -31,7 +31,7 @@ class SearchService {
   }
 
   findByAnnounce(query) {
-    const article = this._articles.find((article) => article.announce.includes(query));
+    const article = this._articles.find((item) => item.announce.includes(query));
     if (!article) {
       return null;
     }
@@ -39,7 +39,7 @@ class SearchService {
   }
 
   findByTitle(query) {
-    const article = this._articles.find((article) => article.title.includes(query));
+    const article = this._articles.find((item) => item.title.includes(query));
     if (!article) {
       return null;
     }

@@ -7,7 +7,7 @@ let data = null;
 
 const getMockData = async () => {
   if (data !== null) {
-    return Promise.resolve(data);
+    return data;
   }
 
   try {
@@ -16,10 +16,10 @@ const getMockData = async () => {
 
   } catch (err) {
     console.error(err);
-    return Promise.reject(err);
+    throw Error(err);
   }
 
-  return Promise.resolve(data);
+  return data;
 };
 
 module.exports = getMockData;

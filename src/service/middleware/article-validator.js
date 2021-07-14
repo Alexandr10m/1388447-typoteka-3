@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
   const keys = Object.keys(newArticle);
   const keysExist = articleKeys.every((key) => keys.includes(key));
 
-  if(!keysExist) {
+  if (!keysExist) {
     return res.status(HttpCode.BAD_REQUEST)
       .send(`Bad request`);
   }
