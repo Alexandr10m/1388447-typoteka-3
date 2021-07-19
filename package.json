@@ -6,8 +6,9 @@
   "scripts": {
     "start": "node ./src/service/service.js",
     "start-front-server": "node ./src/express/index.js",
-    "test": "npm run eslint",
-    "eslint": "eslint --ext .js src/"
+    "test": "npm run jest && npm run eslint",
+    "eslint": "eslint --ext .js src/",
+    "jest": "npm run jest"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,9 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "7.28.0",
-    "eslint-config-htmlacademy": "0.6.0"
+    "eslint-config-htmlacademy": "0.6.0",
+    "jest": "27.0.6",
+    "supertest": "6.1.3"
   },
   "dependencies": {
     "chalk": "4.1.1",
