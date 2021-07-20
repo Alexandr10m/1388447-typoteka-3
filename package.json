@@ -8,7 +8,7 @@
     "start-front-server": "node ./src/express/index.js",
     "test": "npm run jest && npm run eslint",
     "eslint": "eslint --ext .js src/",
-    "jest": "npm run jest"
+    "jest": "jest"
   },
   "repository": {
     "type": "git",
