@@ -25,13 +25,13 @@ module.exports = (app, articleService, commentService) => {
   });
 
   router.post(`/`, articleValidator, (req, res) => {
-    const {article} = articleService.create(req.body);
+    const article = articleService.create(req.body);
 
     res.status(HttpCode.CREATED)
       .json(article);
   });
 
-  router.put(`/:articleId`, articleValidator, (req, res) => {
+  router.put(`/:articleId`, [articleValidator, articleExist(articleService)], (req, res) => {
     const {articleId} = req.params;
     const article = articleService.upDate(articleId, req.body);
 
@@ -39,7 +39,7 @@ module.exports = (app, articleService, commentService) => {
       .json(article);
   });
 
-  router.delete(`/:articleId`, (req, res) => {
+  router.delete(`/:articleId`, articleExist(articleService), (req, res) => {
     const {articleId} = req.params;
     const article = articleService.remove(articleId);
 

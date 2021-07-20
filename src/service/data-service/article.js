@@ -31,7 +31,7 @@ class ArticleService {
   }
 
   remove(id) {
-    const article = this._articles.filter((item) => item.id === id);
+    const [article] = this._articles.filter((item) => item.id === id);
 
     if (!article) {
       return null;

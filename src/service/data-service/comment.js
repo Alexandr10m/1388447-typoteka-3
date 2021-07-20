@@ -26,7 +26,7 @@ class CommentService {
   }
 
   remove(id, article) {
-    const comment = article.comments.filter((item) => item.id === id);
+    const [comment] = article.comments.filter((item) => item.id === id);
 
     if (!comment) {
       return null;
