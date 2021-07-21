@@ -4,6 +4,7 @@ const express = require(`express`);
 const chalk = require(`chalk`);
 const {DEFAULT_PORT} = require(`../../constants`);
 const routerApi = require(`../api`);
+const {logger} = require(`../lib/logger`);
 
 module.exports = {
   name: `--server`,
@@ -15,9 +16,14 @@ module.exports = {
 
     try {
       await routerApi(server);
-      server.listen(port, () => console.info(chalk.green(`Waiting for connection on ${port}`)));
+      server.listen(port, (err) => {
+        if (err) {
+          return logger.error(`An error occurred on server creation: ${err.message}`);
+        }
+        return logger.info(`Listening to connections on ${port}`);
+      });
     } catch (err) {
-      server.on(`error`, ({message}) => console.error(`Server creation error: ${message}`));
+      logger.error(`An error occurred: ${err.message}`);
     }
   }
 };
