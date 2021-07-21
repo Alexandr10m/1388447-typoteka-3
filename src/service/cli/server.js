@@ -37,9 +37,7 @@ module.exports = {
 
     try {
       await routerApi(server);
-      server.listen(port, () => {
-        return logger.info(`Listening to connections on ${port}`);
-      });
+      server.listen(port, () => logger.info(`Listening to connections on ${port}`));
     } catch (err) {
       logger.error(`An error occurred: ${err.message}`);
     }
