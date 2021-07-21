@@ -4,7 +4,8 @@
   "description": "Введите \"Типотека\"",
   "main": "./src/service/service.js",
   "scripts": {
-    "start": "node ./src/service/service.js",
+    "start": "cross-env NODE_ENV=production node ./src/service/service.js",
+    "start::debug": "cross-env NODE_ENV=development node ./src/service/service.js",
     "start-front-server": "node ./src/express/index.js",
     "test": "npm run jest && npm run eslint",
     "eslint": "eslint --ext .js src/",
@@ -25,6 +26,7 @@
   },
   "dependencies": {
     "chalk": "4.1.1",
+    "cross-env": "7.0.3",
     "express": "4.17.1",
     "nanoid": "3.1.23",
     "pino": "6.12.0",

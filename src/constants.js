@@ -12,6 +12,10 @@ const HttpCode = {
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
 };
+const Env = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
 
 const Route = {
   MAIN: `/`,
@@ -39,4 +43,5 @@ module.exports = {
   MOCKS_FILE_PATH,
   MAX_LENGTH_ID,
   API_PREFIX,
+  Env,
 };
