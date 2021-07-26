@@ -4,7 +4,7 @@ const {Router} = require(`express`);
 const category = require(`./category`);
 const search = require(`./search`);
 const article = require(`./article`);
-const getMockData = require(`../lib/get-mock-data`);
+const {getMockData} = require(`../lib/get-mock-data`);
 const {API_PREFIX} = require(`../../constants`);
 const {CategoryService, SearchService, ArticleService, CommentService} = require(`../data-service`);
 
@@ -14,7 +14,7 @@ module.exports = async (app) => {
 
   app.use(API_PREFIX, router);
 
-  category(app, new CategoryService(mockData));
-  search(app, new SearchService(mockData));
-  article(app, new ArticleService(mockData), new CommentService());
+  category(router, new CategoryService(mockData));
+  search(router, new SearchService(mockData));
+  article(router, new ArticleService(mockData), new CommentService());
 };

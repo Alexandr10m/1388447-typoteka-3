@@ -30,13 +30,14 @@ module.exports = {
     const [customPort] = args;
     const port = +customPort || DEFAULT_PORT;
     const server = express();
-    server.use(express.json());
-    server.use(handlerRouteLog);
-    server.use(handlerError);
-    server.use(handlerPageNotFound);
 
     try {
+      server.use(express.json());
+      server.use(handlerRouteLog);
       await routerApi(server);
+      server.use(handlerError);
+      server.use(handlerPageNotFound);
+
       server.listen(port, () => logger.info(`Listening to connections on ${port}`));
     } catch (err) {
       logger.error(`An error occurred: ${err.message}`);

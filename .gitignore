@@ -16,3 +16,6 @@ node_modules/
 build/
 
 mocks.json
+
+# Директория с загруженными изображениями
+src/express/upload

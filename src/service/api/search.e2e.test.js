@@ -55,16 +55,16 @@ describe(`API return article based on search query`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(` 1 article found`, () => expect(response.body).toEqual(mockData[0]));
+  test(` 1 article found`, () => expect(response.body[0]).toEqual(mockData[0]));
 
-  test(`Article has correct id`, () => expect(response.body.id).toBe(`5bm7bn`));
+  test(`Article has correct id`, () => expect(response.body[0].id).toBe(`5bm7bn`));
 
 });
 
 describe(`API return Error`, () => {
-    const app = express();
-    app.use(express.json());
-    search(app, new DataService(mockData));
+  const app = express();
+  app.use(express.json());
+  search(app, new DataService(mockData));
 
   test(`API returns code 404 if nothing is found`, () => {
     return request(app)
@@ -79,6 +79,3 @@ describe(`API return Error`, () => {
       .expect(HttpCode.BAD_REQUEST);
   });
 });
-
-
-

@@ -16,4 +16,6 @@ const shuffle = (someArray) => {
   return someArray;
 };
 
-module.exports = {getRandomInt, shuffle};
+const ensureArray = (value) => Array.isArray(value) ? value : [value];
+
+module.exports = {getRandomInt, shuffle, ensureArray};

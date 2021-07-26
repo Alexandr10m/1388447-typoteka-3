@@ -15,32 +15,32 @@ class SearchService {
   }
 
   findByCategory(query) {
-    const article = this._articles.find((item) => item.category.find((category) => category.includes(query)));
-    if (!article) {
+    const article = this._articles.filter((item) => item.category.find((category) => category.includes(query)));
+    if (article.length === 0) {
       return null;
     }
     return article;
   }
 
   findByFullText(query) {
-    const article = this._articles.find((item) => item.fullText.includes(query));
-    if (!article) {
+    const article = this._articles.filter((item) => item.fullText.includes(query));
+    if (article.length === 0) {
       return null;
     }
     return article;
   }
 
   findByAnnounce(query) {
-    const article = this._articles.find((item) => item.announce.includes(query));
-    if (!article) {
+    const article = this._articles.filter((item) => item.announce.includes(query));
+    if (article.length === 0) {
       return null;
     }
     return article;
   }
 
   findByTitle(query) {
-    const article = this._articles.find((item) => item.title.includes(query));
-    if (!article) {
+    const article = this._articles.filter((item) => item.title.includes(query));
+    if (article.length === 0) {
       return null;
     }
     return article;

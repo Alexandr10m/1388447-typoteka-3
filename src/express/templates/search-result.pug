@@ -1,0 +1,18 @@
+extends layout.pug
+
+block content
+  main
+    section.search-page
+      .search-page__wrapper
+        h1 Поиск
+        .search.search-page__form
+          form(action='#' method='get')
+            label
+              input(type='text' name='search' placeholder='Что ищем?' value='')
+            button.search__button.button.button--transparent(type='submit') Найти
+          each item in results
+            .search__result
+              time.search__date(datetime=item.createdDate) 21.03.2019, 20:33
+              a.search__link
+                | #{item.title}
+                b #{item.announce}
