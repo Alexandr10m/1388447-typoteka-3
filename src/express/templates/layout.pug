@@ -1,3 +1,7 @@
+mixin time(time)
+  -const date = new Date(time);
+  time.preview__time(datetime=time) #{date.getUTCDate()+ `.` + date.getMonth() + 1 + `.` + date.getFullYear() + `, ` + date.getUTCHours() + `:` + date.getUTCMinutes()}
+
 doctype html
 html(lang='ru')
   head

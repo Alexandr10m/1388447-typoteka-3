@@ -5,14 +5,33 @@ const {HttpCode} = require(`../../constants`);
 const articleExist = require(`../middleware/article-exist`);
 const articleValidator = require(`../middleware/article-validator`);
 const commentValidator = require(`../middleware/comment-validator`);
+// const {getLogger} = require(`../lib/logger`);
+
 
 module.exports = (app, articleService, commentService) => {
   const router = new Router();
+  // const logger = getLogger({name: `api/articles`});
+
+  // app.use((req, res, next) => {
+  //   logger.debug(`Request on route ${req.url}`);
+  //   res.on(`finish`, () => {
+  //     logger.info(`Response status code ${res.statusCode}`);
+  //   });
+  //   next();
+  // });
+  // app.use((err, _req, _res, _next) => {
+  //   logger.error(`An error occurred on processing request: ${err.message}`);
+  // });
+
   app.use(`/articles`, router);
+
+  // app.use((req, res) => {
+  //   res.status(HttpCode.NOT_FOUND);
+  //   logger.error(`Route not found: ${req.url}`);
+  // });
 
   router.get(`/`, (req, res) => {
     const articles = articleService.findAll();
-
     res.status(HttpCode.OK)
       .json(articles);
   });

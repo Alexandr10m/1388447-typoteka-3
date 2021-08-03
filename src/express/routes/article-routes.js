@@ -9,7 +9,7 @@ const articleRoutes = new Router();
 
 articleRoutes.get(`/`, async (req, res) => {
   const articles = await api.getArticles();
-  res.render(`all-categories`, {articles});
+  res.render(`main`, {articles});
 });
 
 articleRoutes.get(`/category/:id`, (req, res) =>

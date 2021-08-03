@@ -11,10 +11,9 @@ const {CategoryService, SearchService, ArticleService, CommentService} = require
 module.exports = async (app) => {
   const mockData = await getMockData();
   const router = new Router();
-
   app.use(API_PREFIX, router);
 
-  category(router, new CategoryService(mockData));
-  search(router, new SearchService(mockData));
   article(router, new ArticleService(mockData), new CommentService());
+  search(router, new SearchService(mockData));
+  category(router, new CategoryService(mockData));
 };

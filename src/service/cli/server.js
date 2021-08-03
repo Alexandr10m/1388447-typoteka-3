@@ -15,8 +15,7 @@ const handlerRouteLog = (req, res, next) => {
 };
 
 const handlerPageNotFound = (req, res) => {
-  res.status(HttpCode.NOT_FOUND)
-    .send(`Not Found`);
+  res.status(HttpCode.NOT_FOUND);
   logger.error(`Route not found: ${req.url}`);
 };
 
