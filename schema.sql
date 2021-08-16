@@ -24,13 +24,13 @@ CREATE TABLE articles
 
 CREATE TABLE categories
 (
-    id   integer NOT NULL GENERATED ALWAYS AS IDENTITY,
+    id   integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name varchar(255)
 );
 
 CREATE TABLE comments
 (
-    id         integer      NOT NULL GENERATED ALWAYS AS IDENTITY,
+    id         integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     text       varchar(100) NOT NULL,
     user_id    integer      NOT NULL,
     article_id integer      NOT NULL,
