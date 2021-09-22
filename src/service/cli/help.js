@@ -1,7 +1,8 @@
 'use strict';
 
 const {name: version} = require(`./version`);
-const {name: generate} = require(`./generate`);
+// const {name: generate} = require(`./generate`);
+const {name: filldb} = require(`./filldb`);
 const {name: server} = require(`./server`);
 const chalk = require(`chalk`);
 
@@ -16,7 +17,8 @@ module.exports = {
     Команды:
     ${version}:            выводит номер версии
     ${this.name}:          печатает этот текст
-    ${generate}: <count>   формирует файл mocks.json
+    ${filldb}:             создает и заполняет базу данных
+<!--    generate: <count>   формирует файл mocks.json-->
     ${server}: <count>     запускает сервер
 
     `));

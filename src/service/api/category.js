@@ -2,34 +2,34 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-// const {getLogger} = require(`../lib/logger`);
+const {getLogger} = require(`../lib/logger`);
 
 module.exports = (app, service) => {
   const router = new Router();
-  // const logger = getLogger({name: `api/categories`});
-
-  // app.use((req, res, next) => {
-  //   logger.debug(`Request on route ${req.url}`);
-  //   res.on(`finish`, () => {
-  //     logger.info(`Response status code ${res.statusCode}`);
-  //   });
-  //   next();
-  // });
+  const logger = getLogger({name: `api/categories`});
 
   app.use(`/categories`, router);
 
-  // app.use((err, _req, _res, _next) => {
-  //   logger.error(`An error occurred on processing request: ${err.message}`);
-  // });
-  //
-  // app.use((req, res) => {
-  //   res.status(HttpCode.NOT_FOUND);
-  //   logger.error(`Route not found: ${req.url}`);
-  // });
+  router.get(`/`, async (req, res) => {
+    const {count} = req.query;
+    try {
+      const categories = await service.findAll(count);
+      res.status(HttpCode.OK)
+        .json(categories);
+    } catch (err) {
+      logger.error(`An error occurred on processing request: ${err.message}`);
+    }
+  });
 
-  router.get(`/`, (req, res) => {
-    const categories = service.findAll();
-    res.status(HttpCode.OK)
-      .json(categories);
+  router.get(`/:categoryId`, async (req, res) => {
+    const {categoryId} = req.params;
+    try {
+      const articleByCategory = await service.findOne(categoryId);
+      res.status(HttpCode.OK)
+        .json(articleByCategory);
+
+    } catch (err) {
+      logger.error(`An error occurred on processing request: ${err.message}`);
+    }
   });
 };

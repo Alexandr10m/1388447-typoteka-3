@@ -1,49 +1,23 @@
 'use strict';
 
+const {Op} = require(`sequelize`);
+const Aliase = require(`../../models/aliase`);
+
 class SearchService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
   }
 
-  findArticle(query) {
-    const resultByCategories = this.findByCategory(query);
-    const resultByFullText = this.findByFullText(query);
-    const resultByTitle = this.findByTitle(query);
-    const resultByAnnounce = this.findByAnnounce(query);
-
-    return resultByCategories || resultByFullText || resultByTitle || resultByAnnounce;
-  }
-
-  findByCategory(query) {
-    const article = this._articles.filter((item) => item.category.find((category) => category.includes(query)));
-    if (article.length === 0) {
-      return null;
-    }
-    return article;
-  }
-
-  findByFullText(query) {
-    const article = this._articles.filter((item) => item.fullText.includes(query));
-    if (article.length === 0) {
-      return null;
-    }
-    return article;
-  }
-
-  findByAnnounce(query) {
-    const article = this._articles.filter((item) => item.announce.includes(query));
-    if (article.length === 0) {
-      return null;
-    }
-    return article;
-  }
-
-  findByTitle(query) {
-    const article = this._articles.filter((item) => item.title.includes(query));
-    if (article.length === 0) {
-      return null;
-    }
-    return article;
+  async findAll(query) {
+    const articles = await this._Article.findAll({
+      where: {
+        title: {
+          [Op.substring]: query
+        }
+      },
+      include: [Aliase.CATEGORIES],
+    });
+    return articles.map((it) => it.get());
   }
 }
 

@@ -1,51 +1,47 @@
 'use strict';
 
-const {nanoid} = require(`nanoid`);
-const {MAX_LENGTH_ID} = require(`../../constants`);
+const Aliase = require(`../../models/aliase`);
 
 class ArticleService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
   }
 
-  findAll() {
-    return this._articles;
-  }
-
-  findOne(id) {
-    const article = this._articles.find((item) => item.id === id);
-
-    if (!article) {
-      return null;
+  async findAll(needComments) {
+    const include = [Aliase.CATEGORIES];
+    if (needComments) {
+      include.push(Aliase.COMMENTS);
     }
-
-    return article;
+    const articles = await this._Article.findAll({include});
+    return articles.map((it) => it.get());
   }
 
-  create(article) {
-    const newArticle = Object.assign({id: nanoid(MAX_LENGTH_ID), comments: []}, article);
-
-    this._articles.push(newArticle);
-
-    return newArticle;
-  }
-
-  remove(id) {
-    const [article] = this._articles.filter((item) => item.id === id);
-
-    if (!article) {
-      return null;
+  async findOne(id, needComments) {
+    const include = [Aliase.CATEGORIES];
+    if (needComments) {
+      include.push(Aliase.COMMENTS);
     }
-
-    this._articles = this._articles.filter((item) => item.id !== id);
-
-    return article;
+    return await this._Article.findByPk(id, {include});
   }
 
-  upDate(id, article) {
-    const oldArticle = this._articles.find((item) => item.id === id);
+  async create(articleData) {
+    const article = await this._Article.create({articleData});
+    await article.addCategories(articleData.categories);
+    return article.get();
+  }
 
-    return Object.assign(oldArticle, article);
+ async remove(id) {
+    const removedRows = await this._Article.drop({
+      where: {id}
+    });
+    return !!removedRows;
+  }
+
+  async upDate(id, article) {
+    const [affectedRows] = await this._Article.upDate(article, {
+      where: {id}
+    });
+    return !!affectedRows;
   }
 
 }

@@ -8,27 +8,33 @@ const api = getAPI();
 const articleRoutes = new Router();
 
 articleRoutes.get(`/`, async (req, res) => {
-  const articles = await api.getArticles();
-  res.render(`main`, {articles});
+  const [articles, categories] = await Promise.all([
+    api.getArticles({comments: false}),
+    api.getCategories(true)
+  ]);
+  res.render(`main`, {articles, categories});
 });
 
-articleRoutes.get(`/category/:id`, (req, res) =>
-  res.render(`articles-by-category`)
-);
+articleRoutes.get(`/categories/:id`, async (req, res) => {
+  const {id} = req.params;
+  const articlesByCategory = await api.getCategory(id);
 
-articleRoutes.get(`/add`, async (req, res) => {
+  res.render(`articles-by-category`, {articlesByCategory})
+})
+
+articleRoutes.get(`/add`, (req, res) => {
   res.render(`new-post`);
 });
 
 articleRoutes.get(`/edit/:id`, async (req, res) => {
   const {id} = req.params;
-  const [article, categories] = await Promise.all([api.getArticle(id), api.getCategories()]);
+  const [article, categories] = await Promise.all([api.getArticle(id, {comments: true}), api.getCategories()]);
   res.render(`post`, {article, categories});
 });
 
 articleRoutes.get(`/:id`, async (req, res) => {
-  const articleId = req.params;
-  const article = await api.getArticle(articleId);
+  const {id} = req.params;
+  const article = await api.getArticle(id, {comments: true});
   res.render(`post`, {article});
 });
 

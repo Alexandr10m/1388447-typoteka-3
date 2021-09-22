@@ -3,20 +3,21 @@
 const {Model, DataTypes} = require(`sequelize`);
 
 
-class Category extends Model {
-}
+const define = (sequelize) => {
+  class Category extends Model {}
 
-const define = (sequelize) => Category.init({
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    //  ! какие еще часто используемые поля и типы
-  }
-}, {
-  sequelize,
-  modelName: `Category`,
-  tableName: `categories`
-});
+  Category.init({
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    }
+  }, {
+    sequelize,
+    modelName: `Category`,
+    tableName: `categories`
+  });
+  return Category;
+};
 
 
 module.exports = define;
