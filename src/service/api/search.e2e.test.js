@@ -1,53 +1,67 @@
 'use strict';
 
 const express = require(`express`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
 const request = require(`supertest`);
 const search = require(`./search`);
 const {HttpCode} = require(`../../constants`);
 const DataService = require(`../data-service/search`);
 
-const mockData = [
+
+const mockComments = [
+  `Это где ж такие красоты?`,
+  `Согласен с автором!`
+];
+
+const mockCategories = [
+  `Деревья`,
+  `За жизнь`,
+  `Без рамки`,
+  `Разное`,
+  `IT`,
+  `Музыка`,
+  `Кино`,
+  `Программирование`
+];
+
+const mockArticles = [
   {
-    "id": `5bm7bn`,
     "title": `Как начать программировать`,
-    "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
-    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
-    "category": [
+    "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году.`,
+    "fullText": `Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего.`,
+    "categories": [
       `Деревья`,
       `За жизнь`,
-      `Без рамки`,
-      `Разное`,
-      `IT`,
-      `Музыка`,
-      `Кино`,
-      `Программирование`
+      `Без рамки`
     ],
-    "createdDate": `2021-04-13T07:44:41.958Z`,
     "comments": []
   },
   {
-    "id": `W80paB`,
     "title": `Борьба с прокрастинацией`,
-    "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
-    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой. Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Программировать не настолько сложно, как об этом говорят. Простые ежедневные упражнения помогут достичь успеха. Это один из лучших рок-музыкантов. Он написал больше 30 хитов.`,
-    "category": [
-      `Деревья`,
-      `За жизнь`,
-      `Без рамки`,
+    "announce": `Ёлки — это не просто красивое дерево. `,
+    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году.`,
+    "categories": [
       `Разное`
     ],
-    "createdDate": `2021-04-13T07:44:41.958Z`,
     "comments": []
   },
 ];
+
+const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+
+const app = express();
+app.use(express.json());
+
+beforeAll(async () => {
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, comments: mockComments});
+  search(app, new DataService(mockDB));
+});
 
 describe(`API return article based on search query`, () => {
   let response;
 
   beforeAll(async () => {
-    const app = express();
-    app.use(express.json());
-    search(app, new DataService(mockData));
     response = await request(app)
       .get(`/search`)
       .query({query: `начать программировать`});
@@ -55,26 +69,22 @@ describe(`API return article based on search query`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(` 1 article found`, () => expect(response.body[0]).toEqual(mockData[0]));
+  test(` 1 article found`, () => expect(response.body.length).toBe(1));
 
-  test(`Article has correct id`, () => expect(response.body[0].id).toBe(`5bm7bn`));
+  test(`Article has correct title`, () => expect(response.body[0].title).toBe(mockArticles[0].title));
 
 });
 
 describe(`API return Error`, () => {
-  const app = express();
-  app.use(express.json());
-  search(app, new DataService(mockData));
-
-  test(`API returns code 404 if nothing is found`, () => {
-    return request(app)
+  test(`API returns code 404 if nothing is found`, async () => {
+    return await request(app)
       .get(`/search`)
-      .query({query: `not found`})
+      .query({query: `r`})
       .expect(HttpCode.NOT_FOUND);
   });
 
-  test(`API returns 400 when query string is absent`, () => {
-    return request(app)
+  test(`API returns 400 when query string is absent`, async () => {
+    return await request(app)
       .get(`/search`)
       .expect(HttpCode.BAD_REQUEST);
   });

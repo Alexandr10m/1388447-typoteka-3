@@ -21,7 +21,6 @@ const define = (sequelize) => {
   Article.belongsToMany(Category, {through: ArticleCategory, as: Aliase.CATEGORIES});
   Category.belongsToMany(Article, {through: ArticleCategory, as: Aliase.ARTICLES});
   Category.hasMany(ArticleCategory, {as: Aliase.ARTICLE_CATEGORIES});
-  //! why need this relation, but without it don`t work .apiCategories(count-true);
 
   return {Category, Comment, Article, ArticleCategory};
 };

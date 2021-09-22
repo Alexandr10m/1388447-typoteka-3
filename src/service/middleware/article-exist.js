@@ -11,11 +11,12 @@ module.exports = (service) => async (req, res, next) => {
     const article = await service.findOne(articleId, comments);
 
     if (!article) {
-      return res.status(HttpCode.NOT_FOUND).send(`Article with ${articleId} not found`);
+      res.status(HttpCode.NOT_FOUND).send(`Article with ${articleId} not found`);
+      return;
     }
 
     res.locals.article = article;
-    return next();
+    next();
   } catch (err) {
     logger.error(`An error occurred on processing request: ${err.message}`);
   }

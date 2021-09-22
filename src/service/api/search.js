@@ -14,18 +14,20 @@ module.exports = (app, service) => {
     const {query = ``} = req.query;
 
     if (!query) {
-      return res.status(HttpCode.BAD_REQUEST)
+      res.status(HttpCode.BAD_REQUEST)
         .send(`Bad request`);
+      return;
     }
     try {
       const result = await service.findAll(query);
 
-      if (!result) {
-        return res.status(HttpCode.NOT_FOUND)
+      if (!result.length) {
+        res.status(HttpCode.NOT_FOUND)
           .send(`Query ${query} not found.`);
+        return;
       }
 
-      return res.status(HttpCode.OK)
+      res.status(HttpCode.OK)
         .json(result);
     } catch (err) {
       logger.error(`An error occurred on processing request: ${err.message}`);

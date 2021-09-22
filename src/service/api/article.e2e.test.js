@@ -1,60 +1,70 @@
 'use strict';
 
 const express = require(`express`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
 const request = require(`supertest`);
 const article = require(`./article`);
 const {HttpCode} = require(`../../constants`);
 const DataService = require(`../data-service/article`);
 const CommentService = require(`../data-service/comment`);
 
-const mockData = [
+
+const mockComments = [
+  `Это где ж такие красоты?`,
+  `Согласен с автором!`
+];
+
+const mockCategories = [
+  `Деревья`,
+  `За жизнь`,
+  `Без рамки`,
+  `Разное`,
+  `IT`,
+  `Музыка`,
+  `Кино`,
+  `Программирование`
+];
+
+const mockArticles = [
   {
-    "id": `5bm7bn`,
     "title": `Как начать программировать`,
-    "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
-    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
-    "category": [
+    "announce": `Ёлки — это не просто красивое дерево.`,
+    "fullText": ` Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
+    "categories": [
       `Деревья`,
       `За жизнь`,
-      `Без рамки`,
-      `Разное`,
-      `IT`,
-      `Музыка`,
-      `Кино`,
       `Программирование`
     ],
-    "createdDate": `2021-04-13T07:44:41.958Z`,
     "comments": []
   },
   {
-    "id": `W80paB`,
     "title": `Борьба с прокрастинацией`,
-    "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами.`,
-    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой. Освоить вёрстку несложно. Возьмите книгу новую книгу и закрепите все упражнения на практике. Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Программировать не настолько сложно, как об этом говорят. Простые ежедневные упражнения помогут достичь успеха. Это один из лучших рок-музыкантов. Он написал больше 30 хитов.`,
-    "category": [
-      `Деревья`,
-      `За жизнь`,
+    "announce": `Это прочная древесина.`,
+    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина.`,
+    "categories": [
       `Без рамки`,
       `Разное`
     ],
-    "createdDate": `2021-04-13T07:44:41.958Z`,
     "comments": []
   },
 ];
 
-const createAPI = () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+
   const app = express();
-  const cloneData = JSON.parse(JSON.stringify(mockData));
   app.use(express.json());
-  article(app, new DataService(cloneData), new CommentService());
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, comments: mockComments});
+  article(app, new DataService(mockDB), new CommentService(mockDB));
   return app;
 };
 
 describe(`API returns a list of all articles`, () => {
-  const app = createAPI();
   let response;
 
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app)
       .get(`/articles`);
   });
@@ -63,17 +73,17 @@ describe(`API returns a list of all articles`, () => {
 
   test(`Returns a list of 2 articles`, () => expect(response.body.length).toBe(2));
 
-  test(`First article's id equals '5bm7bn'`, () => expect(response.body[0].id).toBe(`5bm7bn`));
+  test(`First article's title equals 'Как начать программировать'`, () => expect(response.body[0].title).toBe(mockArticles[0].title));
 
 });
 
 describe(`API returns an article with given id`, () => {
-  const app = createAPI();
   let response;
 
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app)
-      .get(`/articles/5bm7bn`);
+      .get(`/articles/1`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
@@ -85,18 +95,15 @@ describe(`API returns an article with given id`, () => {
 describe(`API creates an article if data is valid`, () => {
   const newArticle = {
     "title": `Программировать - это легко!`,
-    "announce": `Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
-    "fullText": `Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
-    "category": [
-      `IT`,
-      `Программирование`
-    ],
-    "createdDate": `2021-03-13T07:41:41.958Z`,
+    "announce": `Первая большая ёлка была установлена`,
+    "fullText": `Вы можете достичь всего.`,
+    "categories": [1, 2],
   };
-  const app = createAPI();
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
       .post(`/articles`)
       .send(newArticle);
@@ -104,7 +111,7 @@ describe(`API creates an article if data is valid`, () => {
 
   test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
-  test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
+  test(`Returns article created`, () => request(app).get(`/articles`).expect((res) => expect(res.body[2].title).toBe(newArticle.title)));
 
   test(`Article count is changed`, () => request(app).get(`/articles`).expect((res) => expect(res.body.length).toBe(3)));
 });
@@ -114,13 +121,15 @@ describe(`API refuses to create an article if data is invalid`, () => {
     "title": `Программировать - это легко!`,
     "announce": `Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
     "fullText": `Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
-    "category": [
+    "categories": [
       `IT`,
       `Программирование`
     ],
-    "createdDate": `2021-03-13T07:41:41.958Z`,
   };
-  const app = createAPI();
+  let app;
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(newArticle)) {
@@ -136,42 +145,39 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
 describe(`API changes existent article`, () => {
   const newArticle = {
-    "id": `5bm7bn`,
     "title": `Программировать - это легко!`,
-    "announce": `Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
-    "fullText": `Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
-    "category": [
+    "announce": `Первая большая ёлка была установлена только в 1938 году.`,
+    "fullText": `Вы можете достичь всего.`,
+    "categories": [
       `IT`,
       `Программирование`
     ],
-    "createdDate": `2021-04-13T07:44:41.958Z`,
     "comments": []
   };
-  const app = createAPI();
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
-      .put(`/articles/5bm7bn`)
+      .put(`/articles/1`)
       .send(newArticle);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Returns changed article`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
-
   test(`Article is really changed`, () => request(app)
-    .get(`/articles/5bm7bn`)
+    .get(`/articles/1`)
     .expect((res) => expect(res.body.title).toBe(`Программировать - это легко!`)));
 });
 
-test(`API returns status code 404 when trying to change non-existent article`, () => {
-  const app = createAPI();
+test(`API returns status code 404 when trying to change non-existent article`, async () => {
+  const app = await createAPI();
   const validArticle = {
     "title": `Как начать программировать`,
-    "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
-    "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
-    "category": [
+    "announce": `Это прочная древесина.`,
+    "fullText": `Ёлки — это не просто красивое дерево.`,
+    "categories": [
       `Деревья`,
       `За жизнь`,
       `Без рамки`,
@@ -181,7 +187,6 @@ test(`API returns status code 404 when trying to change non-existent article`, (
       `Кино`,
       `Программирование`
     ],
-    "createdDate": `2021-04-13T07:44:41.958Z`,
     "comments": []
   };
 
@@ -191,8 +196,8 @@ test(`API returns status code 404 when trying to change non-existent article`, (
     .expect(HttpCode.NOT_FOUND);
 });
 
-test(`API returns status code 400 when trying to change an article with invalid data`, () => {
-  const app = createAPI();
+test(`API returns status code 400 when trying to change an article with invalid data`, async () => {
+  const app = await createAPI();
   const inValidArticle = {
     "announce": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
     "fullText": `Ёлки — это не просто красивое дерево. Это прочная древесина. Первая большая ёлка была установлена только в 1938 году. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Золотое сечение — соотношение двух величин, гармоническая пропорция. Собрать камни бесконечности легко, если вы прирожденный герой.`,
@@ -206,37 +211,38 @@ test(`API returns status code 400 when trying to change an article with invalid 
     .expect(HttpCode.BAD_REQUEST);
 });
 
-describe(`API correctly delets an article`, () => {
-  const app = createAPI();
+describe(`API correctly deletes an article`, () => {
   let response;
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
-      .delete(`/articles/5bm7bn`);
+      .delete(`/articles/1`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Returns deleted article`, () => expect(response.body.id).toBe(`5bm7bn`));
+  test(`Returns articles with decreased length`, () => request(app).get(`/articles`).expect((res) => expect(res.body.length).toBe(1)));
 
-  test(`Articles count is 1 now`, () => request(app)
+  test(`Articles count is 1 now`, async () => await request(app)
     .get(`/articles`)
     .expect((res) => expect(res.body.length).toBe(1))
   );
 });
 
-test(`API refuses to delete non-existent article`, () => {
+test(`API refuses to delete non-existent article`, async () => {
 
-  const app = createAPI();
+  const app = await createAPI();
 
   return request(app)
     .delete(`/articles/NOEXST`)
     .expect(HttpCode.NOT_FOUND);
 });
 
-test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
+test(`API refuses to create a comment to non-existent article and returns status code 404`, async () => {
 
-  const app = createAPI();
+  const app = await createAPI();
 
   return request(app)
     .post(`/article/NOEXST/comments`)
@@ -246,9 +252,9 @@ test(`API refuses to create a comment to non-existent article and returns status
     .expect(HttpCode.NOT_FOUND);
 });
 
-test(`API refuses to delete non-existent comment`, () => {
+test(`API refuses to delete non-existent comment`, async () => {
 
-  const app = createAPI();
+  const app = await createAPI();
 
   return request(app)
     .delete(`/articles/5bm7bn/comments/NOEXST`)

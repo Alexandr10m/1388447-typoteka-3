@@ -19,7 +19,7 @@ class API {
   }
 
   async getArticles({comments}) {
-    return await this._load(`/articles`,  {params: {comments}});
+    return await this._load(`/articles`, {params: {comments}});
   }
 
   async getArticle(id, {comments}) {

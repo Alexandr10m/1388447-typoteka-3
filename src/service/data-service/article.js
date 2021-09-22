@@ -25,20 +25,20 @@ class ArticleService {
   }
 
   async create(articleData) {
-    const article = await this._Article.create({articleData});
+    const article = await this._Article.create(articleData);
     await article.addCategories(articleData.categories);
     return article.get();
   }
 
- async remove(id) {
-    const removedRows = await this._Article.drop({
+  async remove(id) {
+    const removedRows = await this._Article.destroy({
       where: {id}
     });
     return !!removedRows;
   }
 
   async upDate(id, article) {
-    const [affectedRows] = await this._Article.upDate(article, {
+    const [affectedRows] = await this._Article.update(article, {
       where: {id}
     });
     return !!affectedRows;

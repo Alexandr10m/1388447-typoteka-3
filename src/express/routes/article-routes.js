@@ -19,8 +19,8 @@ articleRoutes.get(`/categories/:id`, async (req, res) => {
   const {id} = req.params;
   const articlesByCategory = await api.getCategory(id);
 
-  res.render(`articles-by-category`, {articlesByCategory})
-})
+  res.render(`articles-by-category`, {articlesByCategory});
+});
 
 articleRoutes.get(`/add`, (req, res) => {
   res.render(`new-post`);

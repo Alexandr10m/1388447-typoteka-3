@@ -8,16 +8,16 @@ module.exports = async (sequelize, {categories, articles, comments}) => {
   await sequelize.sync({force: true});
 
   const categoryModels = await Category.bulkCreate(
-    categories.map((category) => ({name: category}))
+      categories.map((category) => ({name: category}))
   );
 
   const categoryIdByName = categoryModels.reduce((acc, next) => ({
     [next.name]: next.id,
     ...acc
-  }),  {});
+  }), {});
 
   const commentModels = await Comment.bulkCreate(
-    comments.map((comment) => ({text: comment}))
+      comments.map((comment) => ({text: comment}))
   );
 
   const commentIdByName = commentModels.reduce((acc, next) => ({
@@ -29,15 +29,15 @@ module.exports = async (sequelize, {categories, articles, comments}) => {
     const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
 
     await articleModel.addCategories(
-      article.categories.map(
-        (name) => categoryIdByName[name]
-      )
+        article.categories.map(
+            (name) => categoryIdByName[name]
+        )
     );
 
     await articleModel.addComments(
-      article.comments.map(
-        (text) => commentIdByName[text]
-      )
+        article.comments.map(
+            (text) => commentIdByName[text]
+        )
     );
   });
 

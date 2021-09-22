@@ -38,7 +38,6 @@ module.exports = (app, articleService, commentService) => {
   router.post(`/`, articleValidator, async (req, res) => {
     try {
       const article = await articleService.create(req.body);
-
       res.status(HttpCode.CREATED)
         .json(article);
 
@@ -66,10 +65,11 @@ module.exports = (app, articleService, commentService) => {
       const article = await articleService.remove(articleId);
 
       if (!article) {
-        return res.status(HttpCode.NOT_FOUND)
+        res.status(HttpCode.NOT_FOUND)
           .send(`Article ${articleId} not found`);
+        return;
       }
-      return res.status(HttpCode.OK)
+      res.status(HttpCode.OK)
         .json(article);
     } catch (err) {
       logger.error(`An error occurred on processing request: ${err.message}`);
@@ -95,11 +95,12 @@ module.exports = (app, articleService, commentService) => {
       const comment = await commentService.findOne(commentId);
 
       if (!comment) {
-        return res.status(HttpCode.NOT_FOUND)
+        res.status(HttpCode.NOT_FOUND)
           .send(`Comment ${commentId} not found`);
+        return;
       }
 
-      return res.status(HttpCode.OK)
+      res.status(HttpCode.OK)
         .json(comment);
     } catch (err) {
       logger.error(`An error occurred on processing request: ${err.message}`);
