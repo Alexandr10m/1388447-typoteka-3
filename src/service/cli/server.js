@@ -16,12 +16,16 @@ const handlerRouteLog = (req, res, next) => {
 };
 
 const handlerPageNotFound = (req, res) => {
-  res.status(HttpCode.NOT_FOUND);
   logger.error(`Route not found: ${req.url}`);
+  res.status(HttpCode.NOT_FOUND);
+  res.end(`Route not found: ${req.url}`);
 };
 
 const handlerError = (err, _req, _res, _next) => {
+  console.log(`handlerError`);
   logger.error(`An error occurred on processing request: ${err.message}`);
+  _res.status(HttpCode.INTERNAL_SERVER_ERROR);
+  _res.end(err.message);
 };
 
 module.exports = {
