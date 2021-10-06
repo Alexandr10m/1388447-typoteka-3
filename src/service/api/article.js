@@ -15,11 +15,17 @@ module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, router);
 
   router.get(`/`, async (req, res) => {
-    const {comments} = req.query;
+    const {limit, offset, comments} = req.query;
+    let result;
     try {
-      const articles = await articleService.findAll(comments);
+      if (limit || offset) {
+        result = await articleService.findPage({limit, offset});
+      } else {
+        result = await articleService.findAll(comments);
+      }
+      console.log(result);
       res.status(HttpCode.OK)
-        .json(articles);
+        .json(result);
     } catch (err) {
       logger.error(`An error occurred on processing request: ${err.message}`);
     }

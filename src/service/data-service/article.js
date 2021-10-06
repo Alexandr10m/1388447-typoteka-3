@@ -44,6 +44,18 @@ class ArticleService {
     return !!affectedRows;
   }
 
+  async findPage({limit, offset}) {
+    const {count, rows} = await this._Article.findAndCountAll({
+      limit,
+      offset,
+      include: [Aliase.CATEGORIES, Aliase.COMMENTS],
+      order: [[`createdAt`, `DESC`]],
+      distinct: true
+    });
+
+    return {count, rows};
+  }
+
 }
 
 module.exports = ArticleService;
