@@ -7,7 +7,7 @@ class ArticleService {
     this._Article = sequelize.models.Article;
   }
 
-  async findAll(needComments) {
+  async findAll(needComments = false) {
     const include = [Aliase.CATEGORIES];
     if (needComments) {
       include.push(Aliase.COMMENTS);

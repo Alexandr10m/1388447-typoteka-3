@@ -16,7 +16,6 @@ class CategoryService {
         attributes: [
           `id`,
           `name`,
-          // `createdAt`
           [Sequelize.fn(`COUNT`, `CategoryId`), `count`]
         ],
         group: [Sequelize.col(`Category.id`)],
